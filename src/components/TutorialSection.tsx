@@ -4,36 +4,37 @@ import { ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
+import { toast } from "@/hooks/use-toast";
 
 const tutorials = [
   {
     title: "Paper Crane",
-    image: "https://images.unsplash.com/photo-1581290122395-372742bf1ad7?auto=format&fit=crop&q=80&w=800",
-    fallbackImage: "https://images.unsplash.com/photo-1616541942221-d17de8a51548?auto=format&fit=crop&q=80&w=800",
+    image: "https://images.unsplash.com/photo-1499744937866-d7e566a20a61?auto=format&fit=crop&q=80&w=800",
+    fallbackImage: "https://images.unsplash.com/photo-1488590528505-98d2b5aba04b?auto=format&fit=crop&q=80&w=800",
     description: "Learn to fold the iconic symbol of peace and hope",
     difficulty: "Medium",
     time: "15 mins"
   },
   {
     title: "Lotus Flower",
-    image: "https://images.unsplash.com/photo-1593540446869-a1a2188848e1?auto=format&fit=crop&q=80&w=800",
-    fallbackImage: "https://images.unsplash.com/photo-1508151320989-03bc9a317e9c?auto=format&fit=crop&q=80&w=800",
+    image: "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&q=80&w=800",
+    fallbackImage: "https://images.unsplash.com/photo-1461749280684-dccba630e2f6?auto=format&fit=crop&q=80&w=800",
     description: "Create a beautiful blooming lotus flower",
     difficulty: "Easy",
     time: "10 mins"
   },
   {
     title: "Jumping Frog",
-    image: "https://images.unsplash.com/photo-1527161153332-99adcc6f2966?auto=format&fit=crop&q=80&w=800",
-    fallbackImage: "https://images.unsplash.com/photo-1534532335525-79a4d0816910?auto=format&fit=crop&q=80&w=800",
+    image: "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&q=80&w=800",
+    fallbackImage: "https://images.unsplash.com/photo-1531297484001-80022131f5a1?auto=format&fit=crop&q=80&w=800",
     description: "Fold a frog that actually jumps when pressed",
     difficulty: "Easy",
     time: "8 mins"
   },
   {
     title: "Dragon",
-    image: "https://images.unsplash.com/photo-1589656966895-2f33e7653819?auto=format&fit=crop&q=80&w=800",
-    fallbackImage: "https://images.unsplash.com/photo-1517694712202-14dd9538aa97?auto=format&fit=crop&q=80&w=800",
+    image: "https://images.unsplash.com/photo-1487058792275-0ad4aaf24ca7?auto=format&fit=crop&q=80&w=800",
+    fallbackImage: "https://images.unsplash.com/photo-1605810230434-7631ac76ec81?auto=format&fit=crop&q=80&w=800",
     description: "Master this challenging mythical creature design",
     difficulty: "Complex",
     time: "45 mins"
@@ -46,25 +47,40 @@ export default function TutorialSection() {
 
   // Preload all tutorial images
   useEffect(() => {
-    tutorials.forEach(tutorial => {
-      const img = new Image();
-      img.src = tutorial.image;
-      img.onload = () => handleImageLoad(tutorial.title);
-      img.onerror = () => {
-        console.error(`Failed to load image for ${tutorial.title}`);
-        handleImageError(tutorial.title);
-        
-        // Try loading fallback
-        const fallbackImg = new Image();
-        fallbackImg.src = tutorial.fallbackImage;
-        fallbackImg.onload = () => handleImageLoad(tutorial.title);
-      };
-      
-      return () => {
-        img.onload = null; 
-        img.onerror = null;
-      };
+    const imagePromises = tutorials.map(tutorial => {
+      return new Promise((resolve) => {
+        const img = new Image();
+        img.src = tutorial.image;
+        img.onload = () => {
+          handleImageLoad(tutorial.title);
+          resolve(true);
+        };
+        img.onerror = () => {
+          console.error(`Failed to load image for ${tutorial.title}`);
+          handleImageError(tutorial.title);
+          
+          // Try loading fallback
+          const fallbackImg = new Image();
+          fallbackImg.src = tutorial.fallbackImage;
+          fallbackImg.onload = () => {
+            handleImageLoad(tutorial.title);
+            resolve(true);
+          };
+          fallbackImg.onerror = () => {
+            // If both main and fallback fail, resolve anyway to avoid hanging
+            resolve(false);
+          };
+        };
+      });
     });
+
+    Promise.all(imagePromises).then(() => {
+      console.log("All tutorial images processed");
+    });
+
+    return () => {
+      // Cleanup function - nothing needed here since we're using promises
+    };
   }, []);
 
   const handleImageLoad = (title: string) => {
@@ -79,6 +95,11 @@ export default function TutorialSection() {
       ...prev,
       [title]: true
     }));
+    toast({
+      title: "Image Loading Issue",
+      description: `Using fallback image for ${title}`,
+      variant: "default"
+    });
   };
 
   return (
@@ -114,11 +135,13 @@ export default function TutorialSection() {
                     alt={tutorial.title}
                     onLoad={() => handleImageLoad(tutorial.title)}
                     onError={() => {
-                      handleImageError(tutorial.title);
-                      // We'll try the fallback image
-                      const fallbackImg = new Image();
-                      fallbackImg.src = tutorial.fallbackImage;
-                      fallbackImg.onload = () => handleImageLoad(tutorial.title);
+                      if (!errorImages[tutorial.title]) {
+                        handleImageError(tutorial.title);
+                        // We'll try the fallback image
+                        const fallbackImg = new Image();
+                        fallbackImg.src = tutorial.fallbackImage;
+                        fallbackImg.onload = () => handleImageLoad(tutorial.title);
+                      }
                     }}
                     className={`w-full h-full object-cover transition-all duration-500 group-hover:scale-110 ${loadedImages[tutorial.title] ? 'opacity-100' : 'opacity-0'}`} 
                   />
