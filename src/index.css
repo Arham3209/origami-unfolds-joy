@@ -68,11 +68,22 @@
   }
 
   .paper-fold-container {
-    @apply relative perspective-1000;
+    @apply relative;
+  }
+
+  .paper-fold-container::before {
+    content: '';
+    @apply block absolute inset-0 pointer-events-none;
+    perspective: 1000px;
   }
 
   .paper-fold {
-    @apply transform transition-transform duration-300 hover:rotate-x-[-10deg];
+    @apply transform transition-transform duration-300 origin-top;
+    transform-style: preserve-3d;
+  }
+
+  .paper-fold:hover {
+    transform: rotateX(-10deg);
   }
 
   .perspective-1000 {

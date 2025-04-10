@@ -117,8 +117,31 @@ export default {
 				'accordion-up': 'accordion-up 0.2s ease-out',
                 'fade-in': 'fade-in 0.5s ease-out',
                 'paper-fold': 'paper-fold 2s ease-in-out infinite'
-			}
+			},
+            transformOrigin: {
+                'top': 'top',
+            },
+            rotate: {
+                '-10': '-10deg',
+            },
+            transform: {
+                'perspective-1000': 'perspective(1000px)',
+            }
 		}
 	},
-	plugins: [require("tailwindcss-animate")],
+	plugins: [
+        require("tailwindcss-animate"),
+        function({ addUtilities, theme, e }) {
+            const values = theme('rotate');
+            const rotateX = Object.entries(values).reduce((acc, [key, value]) => {
+                return {
+                    ...acc,
+                    [`.${e(`rotate-x-${key}`)}`]: {
+                        transform: `rotateX(${value})`
+                    }
+                };
+            }, {});
+            addUtilities(rotateX, ['hover']);
+        }
+    ],
 } satisfies Config;
