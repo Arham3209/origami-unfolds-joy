@@ -9,6 +9,15 @@ export default function AboutUsSection() {
     const img = new Image();
     img.src = "https://images.unsplash.com/photo-1596495578065-6e0763fa1178?auto=format&fit=crop&q=80&w=400";
     img.onload = () => setImageLoaded(true);
+    img.onerror = () => {
+      console.error("Failed to load AboutUs image");
+      // Fallback image could be set here
+    };
+    
+    return () => {
+      img.onload = null;
+      img.onerror = null;
+    };
   }, []);
 
   return (
@@ -25,8 +34,8 @@ export default function AboutUsSection() {
               <div className="md:w-1/3 relative">
                 <div className="aspect-square rounded-full overflow-hidden border-4 border-origami-purple/20 relative">
                   {!imageLoaded && (
-                    <div className="absolute inset-0 bg-gradient-to-r from-origami-blue/30 to-origami-pink/30 animate-pulse flex items-center justify-center">
-                      <div className="text-gray-400">Loading...</div>
+                    <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-r from-origami-blue/20 to-origami-pink/20">
+                      <div className="w-10 h-10 border-3 border-origami-purple/30 border-t-origami-purple rounded-full animate-spin"></div>
                     </div>
                   )}
                   <img 

@@ -1,6 +1,7 @@
 
 import { useState, useEffect } from "react";
 import { X } from "lucide-react";
+import { AspectRatio } from "@/components/ui/aspect-ratio";
 
 const galleryImages = [
   {
@@ -76,11 +77,28 @@ export default function GallerySection() {
 
   // Preload all gallery images
   useEffect(() => {
-    galleryImages.forEach(image => {
-      const img = new Image();
-      img.src = image.src;
-      img.onload = () => handleImageLoad(image.id);
+    const preloadPromises = galleryImages.map(image => {
+      return new Promise((resolve) => {
+        const img = new Image();
+        img.src = image.src;
+        img.onload = () => {
+          handleImageLoad(image.id);
+          resolve(image.id);
+        };
+        img.onerror = () => {
+          console.error(`Failed to load image: ${image.src}`);
+          resolve(image.id);
+        };
+      });
     });
+    
+    Promise.all(preloadPromises).then(() => {
+      console.log('All gallery images preloaded');
+    });
+    
+    return () => {
+      // Cleanup
+    };
   }, []);
 
   const selectedImageData = selectedImage !== null 
@@ -105,19 +123,21 @@ export default function GallerySection() {
               className="aspect-square overflow-hidden rounded-lg cursor-pointer shadow-md hover:shadow-xl transition-shadow duration-300 hover-scale"
               onClick={() => openLightbox(image.id)}
             >
-              <div className="relative w-full h-full">
-                {!loadedImages[image.id] && (
-                  <div className="absolute inset-0 bg-gradient-to-r from-origami-blue/30 to-origami-pink/30 animate-pulse flex items-center justify-center">
-                    <div className="text-gray-400">Loading...</div>
-                  </div>
-                )}
-                <img 
-                  src={image.src} 
-                  alt={image.alt}
-                  className={`w-full h-full object-cover transition-all duration-500 hover:scale-110 ${loadedImages[image.id] ? 'opacity-100' : 'opacity-0'}`}
-                  onLoad={() => handleImageLoad(image.id)}
-                />
-              </div>
+              <AspectRatio ratio={1/1} className="bg-origami-blue/10">
+                <div className="relative w-full h-full">
+                  {!loadedImages[image.id] && (
+                    <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-r from-origami-blue/20 to-origami-pink/20">
+                      <div className="w-10 h-10 border-3 border-origami-purple/30 border-t-origami-purple rounded-full animate-spin"></div>
+                    </div>
+                  )}
+                  <img 
+                    src={image.src} 
+                    alt={image.alt}
+                    className={`w-full h-full object-cover transition-all duration-500 hover:scale-110 ${loadedImages[image.id] ? 'opacity-100' : 'opacity-0'}`}
+                    onLoad={() => handleImageLoad(image.id)}
+                  />
+                </div>
+              </AspectRatio>
             </div>
           ))}
         </div>

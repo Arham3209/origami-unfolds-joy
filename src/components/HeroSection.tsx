@@ -16,8 +16,12 @@ export default function HeroSection() {
   useEffect(() => {
     // Preload the hero image
     const img = new Image();
-    img.src = "https://images.unsplash.com/photo-1607344645866-009c320c00d8?auto=format&fit=crop&q=80";
+    img.src = "https://images.unsplash.com/photo-1607344645866-009c320c00d8?auto=format&fit=crop&q=80&w=1200";
     img.onload = () => setImageLoaded(true);
+    
+    return () => {
+      img.onload = null; // Cleanup
+    };
   }, []);
 
   return (
@@ -56,17 +60,17 @@ export default function HeroSection() {
             </div>
           </div>
           <div className="md:w-1/2 paper-fold-container">
-            <div className={`paper-fold ${imageLoaded ? 'loaded' : ''}`}>
+            <div className="paper-fold">
               <div className="relative rounded-lg shadow-xl overflow-hidden aspect-[4/3]">
                 {!imageLoaded && (
                   <div className="absolute inset-0 bg-gradient-to-r from-origami-blue/30 to-origami-pink/30 animate-pulse flex items-center justify-center">
-                    <div className="text-gray-400">Loading...</div>
+                    <div className="w-16 h-16 border-4 border-origami-purple/30 border-t-origami-purple rounded-full animate-spin"></div>
                   </div>
                 )}
                 <img 
-                  src="https://images.unsplash.com/photo-1607344645866-009c320c00d8?auto=format&fit=crop&q=80" 
+                  src="https://images.unsplash.com/photo-1607344645866-009c320c00d8?auto=format&fit=crop&q=80&w=1200" 
                   alt="Origami crane"
-                  className={`w-full h-full object-cover transition-opacity duration-500 ${imageLoaded ? 'opacity-100' : 'opacity-0'}`}
+                  className={`w-full h-full object-cover ${imageLoaded ? 'opacity-100' : 'opacity-0'} transition-opacity duration-500`}
                   onLoad={() => setImageLoaded(true)}
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-50"></div>

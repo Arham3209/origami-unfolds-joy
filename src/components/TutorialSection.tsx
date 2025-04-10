@@ -1,8 +1,9 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Skeleton } from "@/components/ui/skeleton";
 
 const tutorials = [
   {
@@ -36,8 +37,20 @@ const tutorials = [
 ];
 
 export default function TutorialSection() {
-  // Track loaded state for each image
   const [loadedImages, setLoadedImages] = useState<Record<string, boolean>>({});
+
+  // Preload all tutorial images
+  useEffect(() => {
+    tutorials.forEach(tutorial => {
+      const img = new Image();
+      img.src = tutorial.image;
+      img.onload = () => handleImageLoad(tutorial.title);
+      
+      return () => {
+        img.onload = null; // Cleanup
+      };
+    });
+  }, []);
 
   const handleImageLoad = (title: string) => {
     setLoadedImages(prev => ({
@@ -70,8 +83,8 @@ export default function TutorialSection() {
               <div className="h-48 overflow-hidden">
                 <div className="relative w-full h-full">
                   {!loadedImages[tutorial.title] && (
-                    <div className="absolute inset-0 bg-gradient-to-r from-origami-blue/30 to-origami-pink/30 animate-pulse flex items-center justify-center">
-                      <div className="text-gray-400">Loading...</div>
+                    <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-r from-origami-blue/20 to-origami-pink/20">
+                      <div className="w-10 h-10 border-3 border-origami-purple/30 border-t-origami-purple rounded-full animate-spin"></div>
                     </div>
                   )}
                   <img 
