@@ -6,8 +6,8 @@ import { ChevronDown } from "lucide-react";
 export default function HeroSection() {
   const [imageLoaded, setImageLoaded] = useState(false);
   const [imageError, setImageError] = useState(false);
-  const mainImage = "https://images.unsplash.com/photo-1607344645866-009c320c00d8?auto=format&fit=crop&q=80&w=1200";
-  const fallbackImage = "https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d?auto=format&fit=crop&q=80&w=1200";
+  const mainImage = "https://images.unsplash.com/photo-1587899897387-091ebd01a6b2?auto=format&fit=crop&q=80&w=1200";
+  const fallbackImage = "https://images.unsplash.com/photo-1581088247264-cd544e5581d8?auto=format&fit=crop&q=80&w=1200";
   
   const scrollToSection = (sectionId: string) => {
     const section = document.getElementById(sectionId);

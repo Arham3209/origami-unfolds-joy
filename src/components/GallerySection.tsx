@@ -6,57 +6,57 @@ import { AspectRatio } from "@/components/ui/aspect-ratio";
 const galleryImages = [
   {
     id: 1,
-    src: "https://images.unsplash.com/photo-1607344645866-009c320c00d8?auto=format&fit=crop&q=80&w=800",
-    fallbackSrc: "https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d?auto=format&fit=crop&q=80&w=800",
+    src: "https://images.unsplash.com/photo-1614036634955-ae5e90f9b9eb?auto=format&fit=crop&q=80&w=800",
+    fallbackSrc: "https://images.unsplash.com/photo-1526379095098-d400fd0bf935?auto=format&fit=crop&q=80&w=800",
     alt: "Paper cranes",
     title: "Traditional Cranes"
   },
   {
     id: 2,
-    src: "https://images.unsplash.com/photo-1544387541-7aa5c3b9c4de?auto=format&fit=crop&q=80&w=800",
-    fallbackSrc: "https://images.unsplash.com/photo-1461749280684-dccba630e2f6?auto=format&fit=crop&q=80&w=800",
+    src: "https://images.unsplash.com/photo-1630230594998-2af8ef67e19b?auto=format&fit=crop&q=80&w=800",
+    fallbackSrc: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&q=80&w=800",
     alt: "Origami frog",
     title: "Jumping Frog"
   },
   {
     id: 3,
-    src: "https://images.unsplash.com/photo-1582378553458-1af6067228ad?auto=format&fit=crop&q=80&w=800",
-    fallbackSrc: "https://images.unsplash.com/photo-1649972904349-6e44c42644a7?auto=format&fit=crop&q=80&w=800",
+    src: "https://images.unsplash.com/photo-1629234372512-fd3a11296bef?auto=format&fit=crop&q=80&w=800",
+    fallbackSrc: "https://images.unsplash.com/photo-1515879218367-8466d910aaa4?auto=format&fit=crop&q=80&w=800",
     alt: "Origami dragon",
     title: "Eastern Dragon"
   },
   {
     id: 4,
-    src: "https://images.unsplash.com/photo-1593540446869-a1a2188848e1?auto=format&fit=crop&q=80&w=800",
-    fallbackSrc: "https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&q=80&w=800",
+    src: "https://images.unsplash.com/photo-1628175752008-0c971bc60312?auto=format&fit=crop&q=80&w=800",
+    fallbackSrc: "https://images.unsplash.com/photo-1504384308090-c894fdcc538d?auto=format&fit=crop&q=80&w=800",
     alt: "Lotus flower origami",
     title: "Lotus Flower"
   },
   {
     id: 5,
-    src: "https://images.unsplash.com/photo-1560303787-25e8594a82f9?auto=format&fit=crop&q=80&w=800",
-    fallbackSrc: "https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d?auto=format&fit=crop&q=80&w=800",
+    src: "https://images.unsplash.com/photo-1612259834372-3b063e4400ad?auto=format&fit=crop&q=80&w=800",
+    fallbackSrc: "https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&q=80&w=800",
     alt: "Origami boat",
     title: "Paper Boat"
   },
   {
     id: 6,
-    src: "https://images.unsplash.com/photo-1574264525106-5661f076daa3?auto=format&fit=crop&q=80&w=800",
-    fallbackSrc: "https://images.unsplash.com/photo-1461749280684-dccba630e2f6?auto=format&fit=crop&q=80&w=800",
+    src: "https://images.unsplash.com/photo-1617872564402-e92bfce78e47?auto=format&fit=crop&q=80&w=800",
+    fallbackSrc: "https://images.unsplash.com/photo-1509718443690-d8e2fb3474b7?auto=format&fit=crop&q=80&w=800",
     alt: "Origami butterfly",
     title: "Butterfly Collection"
   },
   {
     id: 7,
-    src: "https://images.unsplash.com/photo-1606722590583-6951b5ea92ad?auto=format&fit=crop&q=80&w=800",
-    fallbackSrc: "https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&q=80&w=800",
+    src: "https://images.unsplash.com/photo-1618207773994-246aa8515b4d?auto=format&fit=crop&q=80&w=800",
+    fallbackSrc: "https://images.unsplash.com/photo-1555066931-4365d14bab8c?auto=format&fit=crop&q=80&w=800",
     alt: "Modular origami",
     title: "Geometric Sphere"
   },
   {
     id: 8,
-    src: "https://images.unsplash.com/photo-1578329557224-48456efc6e6e?auto=format&fit=crop&q=80&w=800",
-    fallbackSrc: "https://images.unsplash.com/photo-1649972904349-6e44c42644a7?auto=format&fit=crop&q=80&w=800",
+    src: "https://images.unsplash.com/photo-1629866646295-197e72b19fff?auto=format&fit=crop&q=80&w=800",
+    fallbackSrc: "https://images.unsplash.com/photo-1517694712202-14dd9538aa97?auto=format&fit=crop&q=80&w=800",
     alt: "Origami fox",
     title: "Forest Fox"
   }
