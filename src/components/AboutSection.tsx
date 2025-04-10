@@ -1,7 +1,19 @@
 
+import { useState, useEffect } from "react";
 import { Star, Brain, Heart, Smile } from "lucide-react";
 
 export default function AboutSection() {
+  const [animateCards, setAnimateCards] = useState(false);
+  
+  useEffect(() => {
+    // Trigger animation after component mounts
+    const timer = setTimeout(() => {
+      setAnimateCards(true);
+    }, 300);
+    
+    return () => clearTimeout(timer);
+  }, []);
+
   const benefits = [
     {
       icon: Brain,
@@ -36,7 +48,7 @@ export default function AboutSection() {
         <div className="flex flex-col md:flex-row items-center gap-10">
           <div className="md:w-1/2">
             <div className="prose max-w-none">
-              <p className="text-lg mb-4">
+              <p className="text-lg mb-4 relative pl-4 border-l-4 border-origami-pink">
                 Origami, the ancient art of paper folding, originated in China around the 1st century and later became a significant cultural practice in Japan by the 6th century.
               </p>
               <p className="text-lg mb-4">
@@ -50,8 +62,14 @@ export default function AboutSection() {
 
           <div className="md:w-1/2 grid grid-cols-1 sm:grid-cols-2 gap-6">
             {benefits.map((benefit, index) => (
-              <div key={index} className="origami-card p-6">
-                <benefit.icon className="w-10 h-10 text-origami-pink mb-4" />
+              <div 
+                key={index} 
+                className={`origami-card p-6 transition-all duration-500 ${
+                  animateCards ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
+                }`} 
+                style={{ transitionDelay: `${index * 150}ms` }}
+              >
+                <benefit.icon className={`w-10 h-10 mb-4 text-origami-pink`} />
                 <h3 className="text-xl font-bold mb-2">{benefit.title}</h3>
                 <p className="text-gray-600">{benefit.description}</p>
               </div>

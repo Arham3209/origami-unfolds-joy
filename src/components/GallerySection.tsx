@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { X } from "lucide-react";
 
 const galleryImages = [
@@ -55,6 +55,7 @@ const galleryImages = [
 
 export default function GallerySection() {
   const [selectedImage, setSelectedImage] = useState<number | null>(null);
+  const [loadedImages, setLoadedImages] = useState<Record<number, boolean>>({});
 
   const openLightbox = (id: number) => {
     setSelectedImage(id);
@@ -65,6 +66,22 @@ export default function GallerySection() {
     setSelectedImage(null);
     document.body.style.overflow = 'auto';
   };
+
+  const handleImageLoad = (id: number) => {
+    setLoadedImages(prev => ({
+      ...prev,
+      [id]: true
+    }));
+  };
+
+  // Preload all gallery images
+  useEffect(() => {
+    galleryImages.forEach(image => {
+      const img = new Image();
+      img.src = image.src;
+      img.onload = () => handleImageLoad(image.id);
+    });
+  }, []);
 
   const selectedImageData = selectedImage !== null 
     ? galleryImages.find(img => img.id === selectedImage) 
@@ -85,32 +102,40 @@ export default function GallerySection() {
           {galleryImages.map((image) => (
             <div 
               key={image.id} 
-              className="aspect-square overflow-hidden rounded-lg cursor-pointer paper-fold-container"
+              className="aspect-square overflow-hidden rounded-lg cursor-pointer shadow-md hover:shadow-xl transition-shadow duration-300 hover-scale"
               onClick={() => openLightbox(image.id)}
             >
-              <img 
-                src={image.src} 
-                alt={image.alt}
-                className="w-full h-full object-cover transition-transform duration-300 hover:scale-105" 
-              />
+              <div className="relative w-full h-full">
+                {!loadedImages[image.id] && (
+                  <div className="absolute inset-0 bg-gradient-to-r from-origami-blue/30 to-origami-pink/30 animate-pulse flex items-center justify-center">
+                    <div className="text-gray-400">Loading...</div>
+                  </div>
+                )}
+                <img 
+                  src={image.src} 
+                  alt={image.alt}
+                  className={`w-full h-full object-cover transition-all duration-500 hover:scale-110 ${loadedImages[image.id] ? 'opacity-100' : 'opacity-0'}`}
+                  onLoad={() => handleImageLoad(image.id)}
+                />
+              </div>
             </div>
           ))}
         </div>
 
-        {/* Lightbox */}
+        {/* Lightbox with enhanced animation */}
         {selectedImage !== null && selectedImageData && (
           <div 
-            className="fixed inset-0 bg-black bg-opacity-90 z-50 flex items-center justify-center p-4"
+            className="fixed inset-0 bg-black bg-opacity-90 z-50 flex items-center justify-center p-4 animate-fade-in"
             onClick={closeLightbox}
           >
             <button 
-              className="absolute top-4 right-4 text-white hover:text-gray-300"
+              className="absolute top-4 right-4 text-white hover:text-gray-300 transition-colors"
               onClick={closeLightbox}
             >
               <X size={32} />
             </button>
             <div 
-              className="max-w-4xl max-h-[90vh] overflow-hidden"
+              className="max-w-4xl max-h-[90vh] overflow-hidden rounded-lg animate-scale-in"
               onClick={(e) => e.stopPropagation()}
             >
               <img 
@@ -118,7 +143,7 @@ export default function GallerySection() {
                 alt={selectedImageData.alt}
                 className="w-full h-auto" 
               />
-              <div className="bg-white p-4">
+              <div className="bg-white p-4 bg-opacity-90 backdrop-blur-sm">
                 <h3 className="text-xl font-bold">{selectedImageData.title}</h3>
                 <p className="text-gray-600">{selectedImageData.alt}</p>
               </div>
