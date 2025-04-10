@@ -7,48 +7,56 @@ const galleryImages = [
   {
     id: 1,
     src: "https://images.unsplash.com/photo-1607344645866-009c320c00d8?auto=format&fit=crop&q=80&w=800",
+    fallbackSrc: "https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d?auto=format&fit=crop&q=80&w=800",
     alt: "Paper cranes",
     title: "Traditional Cranes"
   },
   {
     id: 2,
     src: "https://images.unsplash.com/photo-1544387541-7aa5c3b9c4de?auto=format&fit=crop&q=80&w=800",
+    fallbackSrc: "https://images.unsplash.com/photo-1461749280684-dccba630e2f6?auto=format&fit=crop&q=80&w=800",
     alt: "Origami frog",
     title: "Jumping Frog"
   },
   {
     id: 3,
     src: "https://images.unsplash.com/photo-1582378553458-1af6067228ad?auto=format&fit=crop&q=80&w=800",
+    fallbackSrc: "https://images.unsplash.com/photo-1649972904349-6e44c42644a7?auto=format&fit=crop&q=80&w=800",
     alt: "Origami dragon",
     title: "Eastern Dragon"
   },
   {
     id: 4,
     src: "https://images.unsplash.com/photo-1593540446869-a1a2188848e1?auto=format&fit=crop&q=80&w=800",
+    fallbackSrc: "https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&q=80&w=800",
     alt: "Lotus flower origami",
     title: "Lotus Flower"
   },
   {
     id: 5,
     src: "https://images.unsplash.com/photo-1560303787-25e8594a82f9?auto=format&fit=crop&q=80&w=800",
+    fallbackSrc: "https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d?auto=format&fit=crop&q=80&w=800",
     alt: "Origami boat",
     title: "Paper Boat"
   },
   {
     id: 6,
     src: "https://images.unsplash.com/photo-1574264525106-5661f076daa3?auto=format&fit=crop&q=80&w=800",
+    fallbackSrc: "https://images.unsplash.com/photo-1461749280684-dccba630e2f6?auto=format&fit=crop&q=80&w=800",
     alt: "Origami butterfly",
     title: "Butterfly Collection"
   },
   {
     id: 7,
     src: "https://images.unsplash.com/photo-1606722590583-6951b5ea92ad?auto=format&fit=crop&q=80&w=800",
+    fallbackSrc: "https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&q=80&w=800",
     alt: "Modular origami",
     title: "Geometric Sphere"
   },
   {
     id: 8,
     src: "https://images.unsplash.com/photo-1578329557224-48456efc6e6e?auto=format&fit=crop&q=80&w=800",
+    fallbackSrc: "https://images.unsplash.com/photo-1649972904349-6e44c42644a7?auto=format&fit=crop&q=80&w=800",
     alt: "Origami fox",
     title: "Forest Fox"
   }
@@ -57,6 +65,7 @@ const galleryImages = [
 export default function GallerySection() {
   const [selectedImage, setSelectedImage] = useState<number | null>(null);
   const [loadedImages, setLoadedImages] = useState<Record<number, boolean>>({});
+  const [errorImages, setErrorImages] = useState<Record<number, boolean>>({});
 
   const openLightbox = (id: number) => {
     setSelectedImage(id);
@@ -75,6 +84,21 @@ export default function GallerySection() {
     }));
   };
 
+  const handleImageError = (id: number) => {
+    setErrorImages(prev => ({
+      ...prev,
+      [id]: true
+    }));
+    
+    // Try loading the fallback image
+    const image = galleryImages.find(img => img.id === id);
+    if (image) {
+      const fallbackImg = new Image();
+      fallbackImg.src = image.fallbackSrc;
+      fallbackImg.onload = () => handleImageLoad(id);
+    }
+  };
+
   // Preload all gallery images
   useEffect(() => {
     const preloadPromises = galleryImages.map(image => {
@@ -87,6 +111,7 @@ export default function GallerySection() {
         };
         img.onerror = () => {
           console.error(`Failed to load image: ${image.src}`);
+          handleImageError(image.id);
           resolve(image.id);
         };
       });
@@ -131,10 +156,11 @@ export default function GallerySection() {
                     </div>
                   )}
                   <img 
-                    src={image.src} 
+                    src={errorImages[image.id] ? image.fallbackSrc : image.src} 
                     alt={image.alt}
                     className={`w-full h-full object-cover transition-all duration-500 hover:scale-110 ${loadedImages[image.id] ? 'opacity-100' : 'opacity-0'}`}
                     onLoad={() => handleImageLoad(image.id)}
+                    onError={() => handleImageError(image.id)}
                   />
                 </div>
               </AspectRatio>
@@ -159,7 +185,7 @@ export default function GallerySection() {
               onClick={(e) => e.stopPropagation()}
             >
               <img 
-                src={selectedImageData.src} 
+                src={errorImages[selectedImageData.id] ? selectedImageData.fallbackSrc : selectedImageData.src} 
                 alt={selectedImageData.alt}
                 className="w-full h-auto" 
               />

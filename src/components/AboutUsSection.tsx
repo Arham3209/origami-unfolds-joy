@@ -4,14 +4,26 @@ import { useState, useEffect } from "react";
 
 export default function AboutUsSection() {
   const [imageLoaded, setImageLoaded] = useState(false);
+  const [imageError, setImageError] = useState(false);
+  const imageSrc = "https://images.unsplash.com/photo-1596495578065-6e0763fa1178?auto=format&fit=crop&q=80&w=400";
+  const fallbackImageSrc = "https://images.unsplash.com/photo-1488590528505-98d2b5aba04b?auto=format&fit=crop&q=80&w=400";
 
   useEffect(() => {
     const img = new Image();
-    img.src = "https://images.unsplash.com/photo-1596495578065-6e0763fa1178?auto=format&fit=crop&q=80&w=400";
-    img.onload = () => setImageLoaded(true);
+    img.src = imageSrc;
+    img.onload = () => {
+      setImageLoaded(true);
+      setImageError(false);
+    };
     img.onerror = () => {
       console.error("Failed to load AboutUs image");
-      // Fallback image could be set here
+      setImageError(true);
+      // Try loading the fallback image
+      const fallbackImg = new Image();
+      fallbackImg.src = fallbackImageSrc;
+      fallbackImg.onload = () => {
+        setImageLoaded(true);
+      };
     };
     
     return () => {
@@ -39,10 +51,14 @@ export default function AboutUsSection() {
                     </div>
                   )}
                   <img 
-                    src="https://images.unsplash.com/photo-1596495578065-6e0763fa1178?auto=format&fit=crop&q=80&w=400" 
+                    src={imageError ? fallbackImageSrc : imageSrc} 
                     alt="Origami Artist" 
                     className={`w-full h-full object-cover transition-opacity duration-500 ${imageLoaded ? 'opacity-100' : 'opacity-0'}`}
                     onLoad={() => setImageLoaded(true)}
+                    onError={() => {
+                      setImageError(true);
+                      setImageLoaded(true);
+                    }}
                   />
                 </div>
                 <div className="absolute -bottom-4 -right-4 w-24 h-24 bg-origami-yellow rounded-full -z-10 floating"></div>

@@ -9,6 +9,7 @@ const tutorials = [
   {
     title: "Paper Crane",
     image: "https://images.unsplash.com/photo-1581290122395-372742bf1ad7?auto=format&fit=crop&q=80&w=800",
+    fallbackImage: "https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d?auto=format&fit=crop&q=80&w=800",
     description: "Learn to fold the iconic symbol of peace and hope",
     difficulty: "Medium",
     time: "15 mins"
@@ -16,6 +17,7 @@ const tutorials = [
   {
     title: "Lotus Flower",
     image: "https://images.unsplash.com/photo-1593540446869-a1a2188848e1?auto=format&fit=crop&q=80&w=800",
+    fallbackImage: "https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&q=80&w=800",
     description: "Create a beautiful blooming lotus flower",
     difficulty: "Easy",
     time: "10 mins"
@@ -23,6 +25,7 @@ const tutorials = [
   {
     title: "Jumping Frog",
     image: "https://images.unsplash.com/photo-1544387541-7aa5c3b9c4de?auto=format&fit=crop&q=80&w=800",
+    fallbackImage: "https://images.unsplash.com/photo-1461749280684-dccba630e2f6?auto=format&fit=crop&q=80&w=800",
     description: "Fold a frog that actually jumps when pressed",
     difficulty: "Easy",
     time: "8 mins"
@@ -30,6 +33,7 @@ const tutorials = [
   {
     title: "Dragon",
     image: "https://images.unsplash.com/photo-1582378553458-1af6067228ad?auto=format&fit=crop&q=80&w=800",
+    fallbackImage: "https://images.unsplash.com/photo-1649972904349-6e44c42644a7?auto=format&fit=crop&q=80&w=800",
     description: "Master this challenging mythical creature design",
     difficulty: "Complex",
     time: "45 mins"
@@ -38,6 +42,7 @@ const tutorials = [
 
 export default function TutorialSection() {
   const [loadedImages, setLoadedImages] = useState<Record<string, boolean>>({});
+  const [errorImages, setErrorImages] = useState<Record<string, boolean>>({});
 
   // Preload all tutorial images
   useEffect(() => {
@@ -45,15 +50,32 @@ export default function TutorialSection() {
       const img = new Image();
       img.src = tutorial.image;
       img.onload = () => handleImageLoad(tutorial.title);
+      img.onerror = () => {
+        console.error(`Failed to load image for ${tutorial.title}`);
+        handleImageError(tutorial.title);
+        
+        // Try loading fallback
+        const fallbackImg = new Image();
+        fallbackImg.src = tutorial.fallbackImage;
+        fallbackImg.onload = () => handleImageLoad(tutorial.title);
+      };
       
       return () => {
-        img.onload = null; // Cleanup
+        img.onload = null; 
+        img.onerror = null;
       };
     });
   }, []);
 
   const handleImageLoad = (title: string) => {
     setLoadedImages(prev => ({
+      ...prev,
+      [title]: true
+    }));
+  };
+
+  const handleImageError = (title: string) => {
+    setErrorImages(prev => ({
       ...prev,
       [title]: true
     }));
@@ -88,9 +110,16 @@ export default function TutorialSection() {
                     </div>
                   )}
                   <img 
-                    src={tutorial.image} 
+                    src={errorImages[tutorial.title] ? tutorial.fallbackImage : tutorial.image} 
                     alt={tutorial.title}
                     onLoad={() => handleImageLoad(tutorial.title)}
+                    onError={() => {
+                      handleImageError(tutorial.title);
+                      // We'll try the fallback image
+                      const fallbackImg = new Image();
+                      fallbackImg.src = tutorial.fallbackImage;
+                      fallbackImg.onload = () => handleImageLoad(tutorial.title);
+                    }}
                     className={`w-full h-full object-cover transition-all duration-500 group-hover:scale-110 ${loadedImages[tutorial.title] ? 'opacity-100' : 'opacity-0'}`} 
                   />
                 </div>

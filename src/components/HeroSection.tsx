@@ -5,6 +5,9 @@ import { ChevronDown } from "lucide-react";
 
 export default function HeroSection() {
   const [imageLoaded, setImageLoaded] = useState(false);
+  const [imageError, setImageError] = useState(false);
+  const mainImage = "https://images.unsplash.com/photo-1607344645866-009c320c00d8?auto=format&fit=crop&q=80&w=1200";
+  const fallbackImage = "https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d?auto=format&fit=crop&q=80&w=1200";
   
   const scrollToSection = (sectionId: string) => {
     const section = document.getElementById(sectionId);
@@ -16,11 +19,24 @@ export default function HeroSection() {
   useEffect(() => {
     // Preload the hero image
     const img = new Image();
-    img.src = "https://images.unsplash.com/photo-1607344645866-009c320c00d8?auto=format&fit=crop&q=80&w=1200";
-    img.onload = () => setImageLoaded(true);
+    img.src = mainImage;
+    img.onload = () => {
+      setImageLoaded(true);
+      setImageError(false);
+    };
+    img.onerror = () => {
+      console.error("Failed to load hero image, trying fallback");
+      setImageError(true);
+      
+      // Try loading fallback image
+      const fallbackImg = new Image();
+      fallbackImg.src = fallbackImage;
+      fallbackImg.onload = () => setImageLoaded(true);
+    };
     
     return () => {
-      img.onload = null; // Cleanup
+      img.onload = null;
+      img.onerror = null;
     };
   }, []);
 
@@ -68,10 +84,14 @@ export default function HeroSection() {
                   </div>
                 )}
                 <img 
-                  src="https://images.unsplash.com/photo-1607344645866-009c320c00d8?auto=format&fit=crop&q=80&w=1200" 
+                  src={imageError ? fallbackImage : mainImage} 
                   alt="Origami crane"
                   className={`w-full h-full object-cover ${imageLoaded ? 'opacity-100' : 'opacity-0'} transition-opacity duration-500`}
                   onLoad={() => setImageLoaded(true)}
+                  onError={() => {
+                    console.error("Failed to load hero image");
+                    setImageError(true);
+                  }}
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-50"></div>
               </div>
